@@ -3,15 +3,20 @@ version: "3.9"
 services:
   web:
     image: cloud
+    environment:
+      - POSTGRES_PASSWORD=dev_password
+      - POSTGRES_USER=si5_sacc
+      - POSTGRES_DB=td_1
+      - POSTGRES_HOST=postgres
     ports:
       - "3000:3000/tcp"
-    # depends_on:
-    #   - database
+    entrypoint: "bash -c './wait-for-it.sh $${POSTGRES_HOST}:5432 -- node app.js'"
+    depends_on:
+      - postgres
 
-  database:
-    database:
-      image: postgres:14
-      environment:
-        - POSTGRES_PASSWORD=dev_password
-        - POSTGRES_USER=si5_sacc
-        - POSTGRES_DB=td_1
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_PASSWORD=dev_password
+      - POSTGRES_USER=si5_sacc
+      - POSTGRES_DB=td_1
